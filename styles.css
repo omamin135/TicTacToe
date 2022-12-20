@@ -36,8 +36,6 @@ body {
 
 }
 
-
-
 .play-grid {
     width: fit-content;
     display: grid;
@@ -55,6 +53,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: 5rem;
 }
 
 .cell:hover{

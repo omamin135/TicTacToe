@@ -56,7 +56,12 @@ const gameBoard = (() => {
         return "no winner";
     }
 
-    return {updateBoard, checkBoard};
+    const validPos = (row, col) => {
+        console.log(board[row][col])
+        return board[row][col] === '_'
+    }
+
+    return {updateBoard, checkBoard, validPos};
 })();
 
 
@@ -100,19 +105,17 @@ cells.forEach((cell) => {
         let row = cell.dataset.row;
         let col = cell.dataset.col;
 
-        /* update the internal game board */ 
-        gameBoard.updateBoard(gameState.getCurrPlayer(), row, col);
-        
-        /*add "x" or "o" img to the selected cell depending on active player */
-        let img = document.createElement("img");
-        if (gameState.getCurrPlayer() === 'x'){
-            img.setAttribute("src", "assets/cross.svg");
-            img.setAttribute("class", "cross");
-        } else {
-            img.setAttribute("src", "assets/circle.svg");
-            img.setAttribute("class", "circle");
+        if (gameBoard.validPos(row, col)){
+            if (gameState.getCurrPlayer() === 'x'){
+                cell.textContent = 'X'
+            } else {
+                cell.textContent = 'O'
+            }
         }
-        cell.appendChild(img);
+            
+         /* update the internal game board */ 
+         gameBoard.updateBoard(gameState.getCurrPlayer(), row, col);
+        
 
         /* check if anyone has won the round yet */
         let gameDecision = gameBoard.checkBoard();
