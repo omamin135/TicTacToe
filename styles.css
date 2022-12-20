@@ -1,17 +1,67 @@
+* {
+    --cell-color: rgb(236, 235, 235);
+    --active-player: rgb(250, 166, 166);
+    
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: whitesmoke;
+}
+
+.players{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.player-container {
+    width: 200px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;;
+    font-size: 1.5rem;
+    background-color: white;
+    margin: 15px;
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px 2px var(--cell-color);
+}
+
+.player-container:hover {
+    box-shadow: 0px 0px 10px 2px var(--active-player);
+    background-color: var(--active-player);
+
+}
+
+
+
 .play-grid {
     width: fit-content;
     display: grid;
-    grid-template: repeat(3, 1fr) / repeat(3, 1fr);
-    gap: 15px 15px;
+    grid-template: repeat(3, 110px) / repeat(3, 110px);
+    gap: 5px 5px;
+    justify-items: center;
+    align-items: center;
 }
 
 .cell {
     width: 100px;
     height: 100px;
-    background-color: lightblue;
+    background-color: var(--cell-color);
+    border-radius: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.cell:hover{
+    width: 103px;
+    height: 103px;
+    box-shadow: 0px 0px 3px 3px var(--cell-color);
+    transition-duration: 0.2s;
 }
 
 .circle {
