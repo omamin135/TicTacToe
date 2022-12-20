@@ -1,5 +1,6 @@
 const gameState = (() => {
     let currentPlayer = 'x';
+    const cells = document.querySelectorAll(".cell");
 
     const togglePlayer = () => {
         if (currentPlayer === 'x'){
@@ -9,13 +10,27 @@ const gameState = (() => {
         }
     }
 
-    const announceWinner = (player) => {
+    const announceWinner = (player, decision) => {
         console.log(`Player ${player} Won!`);
+        cells.forEach((cell) => {
+            
+            decision.cells.forEach((winning) => {
+                if (cell.dataset.row == winning[0] && cell.dataset.col == winning[1]){
+                    console.log(cell.dataset.row, cell.dataset.col)
+                    cell.style.backgroundColor = "green";
+                }
+            })
+            
+        })
     }
 
     const getCurrPlayer = () => currentPlayer;
 
-    return {togglePlayer, getCurrPlayer, announceWinner};
+    const newGame = () => {
+        currentPlayer = 'X';
+    }
+
+    return {togglePlayer, getCurrPlayer, announceWinner, newGame};
 })();
 
 
@@ -23,6 +38,8 @@ const gameBoard = (() => {
     let board = [['_', '_', '_'], 
                  ['_', '_', '_'], 
                  ['_', '_', '_']];
+
+    let test = [1,2,3];
 
     const updateBoard = (player, row, col) => {
         if (player == 'x'){
@@ -35,25 +52,25 @@ const gameBoard = (() => {
     const checkBoard = () => {
         for (let r = 0; r < 3; r++){
             if ((board[r][0] === board[r][1]) && (board[r][1] === board[r][2])){
-                return board[r][0];
+                return {player: board[r][0], cells: [[r, 0], [r, 1], [r, 2]]};
             }
         }
 
         for (let c = 0; c < 3; c++){
             if ((board[0][c] === board[1][c]) && (board[1][c] === board[2][c])){
-                return board[0][c];
+                return {player: board[0][c], cells: [[0, c], [1, c], [2, c]]};
             }
         }
 
         if ((board[0][0] === board[1][1]) && (board[1][1] === board[2][2])){
-            return board[0][0];
+            return {player: board[0][0], cells: [[0, 0], [1, 1], [2, 2]]};
         }
 
         if ((board[0][2] == board[1][1]) && (board[1][1] == board[2][0])){
-            return board[0][2];
+            return {player: board[0][2], cells: [[0, 2], [1, 1], [2, 0]]};
         }
 
-        return "no winner";
+        return {player: "no winner", cells: [[], [], []]};
     }
 
     const validPos = (row, col) => {
@@ -61,7 +78,18 @@ const gameBoard = (() => {
         return board[row][col] === '_'
     }
 
-    return {updateBoard, checkBoard, validPos};
+    const clearBoard = () => {
+        board = board.map((row) => {
+            return row.map((cell) => {
+                return '_' 
+            })
+        }) 
+    }
+
+    const printBoard = () => {
+        console.log(board)
+    }
+    return {updateBoard, checkBoard, validPos, clearBoard, printBoard};
 })();
 
 
@@ -113,20 +141,20 @@ cells.forEach((cell) => {
             }
         }
             
-         /* update the internal game board */ 
-         gameBoard.updateBoard(gameState.getCurrPlayer(), row, col);
-        
+        /* update the internal game board */ 
+        gameBoard.updateBoard(gameState.getCurrPlayer(), row, col);
+        gameBoard.printBoard()
 
         /* check if anyone has won the round yet */
         let gameDecision = gameBoard.checkBoard();
 
         /* if someone won the round, announce the winner */
-        if (gameDecision === player1.getID()){
-            gameState.announceWinner(player1.getID())
+        if (gameDecision.player === player1.getID()){
+            gameState.announceWinner(player1.getID(), gameDecision);
             player1.incrementWins();
 
-        } else if (gameDecision === player2.getID()){
-            gameState.announceWinner(player2.getID())
+        } else if (gameDecision.player === player2.getID()){
+            gameState.announceWinner(player2.getID(), gameDecision);
             player2.incrementWins();
         }
 
