@@ -1,0 +1,23 @@
+.play-grid {
+    width: fit-content;
+    display: grid;
+    grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+    gap: 15px 15px;
+}
+
+.cell {
+    width: 100px;
+    height: 100px;
+    background-color: lightblue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.circle {
+    width: 80px
+}
+
+.cross {
+    width: 100px
+}
