@@ -1,6 +1,43 @@
 const gameState = (() => {
     let currentPlayer = 'x';
+    let round = 1;
+
+    /* fetch all playable cells in grid */
     const cells = document.querySelectorAll(".cell");
+    cells.forEach((cell) => {
+        cell.addEventListener("click", () => {
+            
+            /* fetch the row and column selected */
+            let row = cell.dataset.row;
+            let col = cell.dataset.col;
+
+            if (gameBoard.validPos(row, col)){
+                if (getCurrPlayer() === 'x'){
+                    cell.textContent = 'X'
+                } else {
+                    cell.textContent = 'O'
+                }
+            }
+                
+            /* update the internal game board */ 
+            gameBoard.updateBoard(getCurrPlayer(), row, col);
+
+            /* check if anyone has won the round yet */
+            let gameDecision = gameBoard.checkBoard();
+
+            /* if someone won the round, announce the winner */
+            if (gameDecision.player === player1.getID()){
+                announceRoundWinner(player1, gameDecision);
+            } else if (gameDecision.player === player2.getID()){
+                announceRoundWinner(player2, gameDecision); 
+            } else if (gameDecision === "draw"){
+                announceDraw(); 
+            }
+
+            /* toggle to next player */
+            togglePlayer();
+        });
+    });
 
     const togglePlayer = () => {
         if (currentPlayer === 'x'){
@@ -10,27 +47,76 @@ const gameState = (() => {
         }
     }
 
-    const announceWinner = (player, decision) => {
-        console.log(`Player ${player} Won!`);
-        cells.forEach((cell) => {
-            
+    const announceRoundWinner = (player, decision) => {
+        player.incrementWins();
+        console.log(`Player ${player.getID()} Won!`);
+        cells.forEach((cell) => {    
             decision.cells.forEach((winning) => {
                 if (cell.dataset.row == winning[0] && cell.dataset.col == winning[1]){
-                    console.log(cell.dataset.row, cell.dataset.col)
+                    
                     cell.style.backgroundColor = "green";
                 }
-            })
-            
+            })   
         })
+        
+        const b = document.querySelector("body");
+        let div = document.createElement("div");
+        div.setAttribute("class", "round-winner");
+
+        let p = document.createElement("p");
+        p.textContent = `Round ${round}: Player ${player.getID().toUpperCase()}!`;
+
+        div.appendChild(p);
+
+        b.appendChild(div);
+
+        const sleep = ms => new Promise(r => setTimeout(r, 2000));
+        sleep().then(() => {
+            b.removeChild(document.querySelector(".round-winner"));
+            nextRound();
+        });
+    }
+
+    const announceDraw = () => {
+
+        console.log("Draw!");
+ 
+        const b = document.querySelector("body");
+        let div = document.createElement("div");
+        div.setAttribute("class", "round-winner");
+
+        let p = document.createElement("p");
+        p.textContent = `Round ${round}: Draw!`;
+
+        div.appendChild(p);
+
+        b.appendChild(div);
+
+        const sleep = ms => new Promise(r => setTimeout(r, 2000));
+        sleep().then(() => {
+            b.removeChild(document.querySelector(".round-winner"));
+            nextRound();
+        });
     }
 
     const getCurrPlayer = () => currentPlayer;
 
-    const newGame = () => {
-        currentPlayer = 'X';
+    const nextRound = () => {
+        // currentPlayer = 'x';
+        gameBoard.clearBoard();
+        round++;
+
+        clearWebBoard();
     }
 
-    return {togglePlayer, getCurrPlayer, announceWinner, newGame};
+    const clearWebBoard = () => {
+        cells.forEach((cell) => {
+            cell.style.backgroundColor = "rgb(236, 235, 235)";
+            cell.textContent = "";
+        })
+    }
+
+    return {};
 })();
 
 
@@ -50,6 +136,7 @@ const gameBoard = (() => {
     }
 
     const checkBoard = () => {
+
         for (let r = 0; r < 3; r++){
             if ((board[r][0] === board[r][1]) && (board[r][1] === board[r][2])){
                 return {player: board[r][0], cells: [[r, 0], [r, 1], [r, 2]]};
@@ -70,11 +157,16 @@ const gameBoard = (() => {
             return {player: board[0][2], cells: [[0, 2], [1, 1], [2, 0]]};
         }
 
-        return {player: "no winner", cells: [[], [], []]};
+        for (let r = 0; r<board.length; r++){
+            if (board[r].indexOf('_') != -1){
+                return {player: "no winner", cells: [[], [], []]};
+            }
+        }
+
+        return "draw"; 
     }
 
     const validPos = (row, col) => {
-        console.log(board[row][col])
         return board[row][col] === '_'
     }
 
@@ -124,41 +216,3 @@ const player = (id) => {
 const player1 = player("x");
 const player2 = player("o");
 
-/* fetch all playable cells in grid */
-const cells = document.querySelectorAll(".cell");
-cells.forEach((cell) => {
-    cell.addEventListener("click", () => {
-        
-        /* fetch the row and column selected */
-        let row = cell.dataset.row;
-        let col = cell.dataset.col;
-
-        if (gameBoard.validPos(row, col)){
-            if (gameState.getCurrPlayer() === 'x'){
-                cell.textContent = 'X'
-            } else {
-                cell.textContent = 'O'
-            }
-        }
-            
-        /* update the internal game board */ 
-        gameBoard.updateBoard(gameState.getCurrPlayer(), row, col);
-        gameBoard.printBoard()
-
-        /* check if anyone has won the round yet */
-        let gameDecision = gameBoard.checkBoard();
-
-        /* if someone won the round, announce the winner */
-        if (gameDecision.player === player1.getID()){
-            gameState.announceWinner(player1.getID(), gameDecision);
-            player1.incrementWins();
-
-        } else if (gameDecision.player === player2.getID()){
-            gameState.announceWinner(player2.getID(), gameDecision);
-            player2.incrementWins();
-        }
-
-        /* toggle to next player */
-        gameState.togglePlayer();
-    });
-});
