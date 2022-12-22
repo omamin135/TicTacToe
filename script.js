@@ -202,7 +202,7 @@ const gameBoard = (() => {
 
 const player = (id) => {
     let playerID = id;
-
+    const playerContainer = document.querySelector(`.${id}`);
     let wins = 0;
 
     /**
@@ -222,6 +222,7 @@ const player = (id) => {
      */
     const incrementWins = () => {
         wins++;
+        playerContainer.textContent = `Player ${playerID.toUpperCase()}: ${wins}`
     }
 
     return {getWins, getID, incrementWins};
