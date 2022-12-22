@@ -82,9 +82,14 @@ const gameState = (() => {
         
         let p = document.createElement("p");
         p.textContent = `Round ${round}: Player ${player.getID().toUpperCase()}!`;
+        p.setAttribute("class", "announcement");
 
         div.appendChild(p);
-     
+
+        p = document.createElement("p");
+        p.textContent = "click to continue";
+        
+        div.appendChild(p);
         b.appendChild(div);
 
         div.addEventListener("click", () => {
@@ -102,16 +107,21 @@ const gameState = (() => {
 
         let p = document.createElement("p");
         p.textContent = `Round ${round}: Draw!`;
+        p.setAttribute("class", "announcement");
 
         div.appendChild(p);
 
+        p = document.createElement("p");
+        p.textContent = "click to continue";
+        div.appendChild(p);
+        
         b.appendChild(div);
 
-        const sleep = ms => new Promise(r => setTimeout(r, 2000));
-        sleep().then(() => {
+        div.addEventListener("click", () => {
             b.removeChild(document.querySelector(".round-winner"));
             nextRound();
-        });
+            togglePlayer();
+        })    
     }
 
     const getCurrPlayer = () => currentPlayer;
@@ -191,11 +201,7 @@ const gameBoard = (() => {
             })
         }) 
     }
-
-    const printBoard = () => {
-        console.log(board)
-    }
-    return {updateBoard, checkBoard, validPos, clearBoard, printBoard};
+    return {updateBoard, checkBoard, validPos, clearBoard};
 })();
 
 
