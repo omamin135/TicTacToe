@@ -32,10 +32,11 @@ const gameState = (() => {
                 announceRoundWinner(player2, gameDecision); 
             } else if (gameDecision === "draw"){
                 announceDraw();
+            } else {
+                togglePlayer();
             }
 
-            /* toggle to next player */
-            togglePlayer();
+            
             
         });
     });
@@ -63,41 +64,38 @@ const gameState = (() => {
     }
 
     const announceRoundWinner = (player, decision) => {
+
         player.incrementWins();
-        console.log(`Player ${player.getID()} Won!`);
         cells.forEach((cell) => {    
             decision.cells.forEach((winning) => {
-                if (cell.dataset.row == winning[0] && cell.dataset.col == winning[1]){
-                    
-                    cell.style.backgroundColor = "green";
+                if (cell.dataset.row == winning[0] && cell.dataset.col == winning[1]){ 
+                    cell.style.boxShadow = "0px 0px 10px 2px var(--winning-row)";
+                    cell.style.backgroundColor = "var(--winning-row)";
                 }
             })   
         })
         
         const b = document.querySelector("body");
         let div = document.createElement("div");
+       
         div.setAttribute("class", "round-winner");
-
+        
         let p = document.createElement("p");
         p.textContent = `Round ${round}: Player ${player.getID().toUpperCase()}!`;
 
         div.appendChild(p);
-
+     
         b.appendChild(div);
 
-        const sleep = ms => new Promise(r => setTimeout(r, 2000));
-        sleep().then(() => {
+        div.addEventListener("click", () => {
             b.removeChild(document.querySelector(".round-winner"));
             nextRound();
-        });
-
-        togglePlayerDisplay();
+            togglePlayer();
+        })        
     }
 
     const announceDraw = () => {
 
-        console.log("Draw!");
- 
         const b = document.querySelector("body");
         let div = document.createElement("div");
         div.setAttribute("class", "round-winner");
@@ -129,6 +127,7 @@ const gameState = (() => {
     const clearWebBoard = () => {
         cells.forEach((cell) => {
             cell.style.backgroundColor = "rgb(236, 235, 235)";
+            cell.style.boxShadow = "";
             cell.textContent = "";
         })
     }
