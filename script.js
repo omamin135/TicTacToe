@@ -31,11 +31,12 @@ const gameState = (() => {
             } else if (gameDecision.player === player2.getID()){
                 announceRoundWinner(player2, gameDecision); 
             } else if (gameDecision === "draw"){
-                announceDraw(); 
+                announceDraw();
             }
 
             /* toggle to next player */
             togglePlayer();
+            
         });
     });
 
@@ -45,6 +46,20 @@ const gameState = (() => {
         } else {
             currentPlayer = 'x';
         }
+
+        togglePlayerDisplay();  
+    }
+
+    const togglePlayerDisplay = () => {
+        let playerContainer = document.querySelectorAll(".player-container");
+
+        playerContainer.forEach((p) => {
+            if(p.classList[1] === currentPlayer){
+                p.style = "box-shadow: 0px 0px 10px 2px var(--active-player); background-color: var(--active-player);";
+            } else {
+                p.style = "";
+            }
+        })
     }
 
     const announceRoundWinner = (player, decision) => {
@@ -75,6 +90,8 @@ const gameState = (() => {
             b.removeChild(document.querySelector(".round-winner"));
             nextRound();
         });
+
+        togglePlayerDisplay();
     }
 
     const announceDraw = () => {
@@ -124,8 +141,6 @@ const gameBoard = (() => {
     let board = [['_', '_', '_'], 
                  ['_', '_', '_'], 
                  ['_', '_', '_']];
-
-    let test = [1,2,3];
 
     const updateBoard = (player, row, col) => {
         if (player == 'x'){
